@@ -3,8 +3,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.generics import get_object_or_404
-from myweb.example.models import Book
-from myweb.example.serializers import BookSerializer
+from .models import Book
+from .serializers import BookSerializer
+
 # Create your views here.
 
 @api_view(['GET'])
@@ -31,3 +32,21 @@ def bookAPI(request, bid):
     serializer = BookSerializer(book)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+class BooksAPI(APIView):
+    def get(self, request):
+        books = Book.objects.all()
+        serializers = BookSerializer(books, many=True)
+        return Response(serializers.data,status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        serializers = BookSerializer(data=request.data)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data, status=status.HTTP_201_CREATED)
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class BookAPI(APIView):
+    def get(self, request, bid):
+        book = get_object_or_404(Book,bid=bid)
+        serializers = BookSerializer(book)
+        return Response(serializers.data, status=status.HTTP_200_OK)
