@@ -54,4 +54,19 @@ class BookAPIMixins(mixins.RetrieveModelMixin,mixins.UpdateModelMixin, mixins.De
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
     def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)    
+        return self.destroy(request, *args, **kwargs)
+
+class BooksAPIGenerics(generics.ListCreateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+class BookAPIGenerics(generics.RetrieveDestroyAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    lookup_field = 'bid'
+
+class BookViewSet(viewsets.ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+    
